@@ -1,28 +1,77 @@
 import os, sys
-import numpy as np
+# import numpy as np
+from fuzzy_traffic_controller import fuzzy_controller_function
 
 
-def check_for_emv(vehicleIDList):
+def get_emv(vehicleIDList):
+    emv_list = []
     for vehicleID in vehicleIDList:
         if vehicleID.startswith('emergency-route'):
-            return vehicleID
-    return 0
+            emv_list.append(vehicleID);
+    return emv_list
 
 
-def calculate_waiting_time():
-    totalWaitingTime = 0
-    for eachLane in laneIDs:
-        totalWaitingTime += traci.lane.getWaitingTime(eachLane)
-    return totalWaitingTime
+def current_moving_lane():
+    if traci.trafficlight.getRedYellowGreenState(trafficLightID).startswith('rrrr'):
+        return 'x'
+    else:
+        return 'y'
 
 
+def get_lane_lists(traffic_lanes_in_x_axis, traffic_lanes_in_y_axis):
+    """
+
+    :param traffic_lanes_in_x_axis:  list
+        lanes controlled by traffic light in the x-axis
+    :param traffic_lanes_in_y_axis: list
+        lanes controlled by traffic light in the y-axis
+    :return: green_light_lanes: array
+        list of lanes currently moving.
+    ::return: red_light_lanes: array
+        list of lanes blocked by traffic
+
+    """
+    if current_moving_lane() == 'x':
+        return traffic_lanes_in_x_axis, traffic_lanes_in_y_axis
+    else:
+        return traffic_lanes_in_y_axis, traffic_lanes_in_x_axis
+
+
+def get_vehicles_in_lane(array_of_lane_id):
+    """
+
+    :param array_of_lane_id: list
+        a list containing the IDs of the lanes to get vehicles from
+    :return: vehicles: list
+        a list of all vehicles in the lanes
+
+    """
+    vehicles = []
+    for laneIDs in array_of_lane_id:
+        vehicles = vehicles + list(traci.lane.getLastStepVehicleIDs(laneIDs))
+    return vehicles
+
+
+def vehicle_waiting_time_in_lane(vehicle_list):
+    waiting_times = []
+    for vehicle in vehicle_list:
+        waiting_times.append(traci.vehicle.getAccumulatedWaitingTime(vehicle))
+    if len(waiting_times) == 0:
+        return 0;
+    else:
+        waiting_times.sort()
+        return waiting_times[-1]
+
+
+############## END OF FUNCTIONS
+######################################################
+############## START OF PROGRAM
 # check if sumo home is defined
 if 'SUMO_HOME' in os.environ:
     tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
     sys.path.append(tools)
 else:
     sys.exit("please declare environment variable 'SUMO_HOME'")
-
 
 sumoBinary = "sumo-gui"
 sumoCmd = [sumoBinary, "-c", "4-junction.sumocfg", "--start"]
@@ -31,77 +80,63 @@ import traci
 
 traci.start(sumoCmd)
 
-step = 0
-
-waiting_time_G2H1 = 0
-waiting_time_D1B2 = 0
 
 lanes_in_G2H1 = ['F2_0', 'F2_1', 'G2_0', 'G2_1', 'H1_0', 'H1_1', 'I1_0', 'I1_1']
 lanes_in_D1B2 = ['A2_0', 'A2_1', 'B2_0', 'B2_1', 'D1_0', 'D1_1', 'E1_0', 'E1_1']
 
-accumulated_waiting_time =[]
+total_vehicle_waiting_time = 0
+nemv_waiting_time = 0
+emv_waiting_time = 0
 
-totalWaitingTime = 0
-vehicleWaitingTime = 0
-emergencyVehicleWaitingTime = 0
+trafficLightID = traci.trafficlight.getIDList()[0]
 
-
-trafficLightID = traci.trafficlight.getIDList()
-print('trafficLightID')
-print(trafficLightID)
-laneIDs = traci.lane.getIDList()
-laneCount = traci.lane.getIDCount
-routeIDs = traci.route.getIDList()
-
-print('laneIDs')
-print(laneIDs)
-
-
-vehicleIDList = []
+step = 0
 # while step < 16000:
 while step < 1500:
-    # vehicleIDList = traci.vehicle.getIDList()
-    # emv = check_for_emv(vehicleIDList);
+    # run traffic light controller code after every five steps ( to optimize speed)
+    if (step > 0) and (step % 25) == 0:
+        # The get current lane the traffic light is passing
+        lanes_currently_moving, lanes_stopped_by_light = get_lane_lists(lanes_in_D1B2, lanes_in_G2H1)
 
-    # run traffic ight code after five steps ( to optimize speed)
-    # TODO get current lane the traffic light is passing
+        # Get cars in both lanes lane
+        vehicles_in_red_lanes = get_vehicles_in_lane(lanes_stopped_by_light)
+        vehicles_in_green_lanes = get_vehicles_in_lane(lanes_currently_moving)
 
-    if step % 5 == 0:
+        # Get no of cars in both lane
+        no_vehicles_in_red_lanes = len(vehicles_in_red_lanes)
+        no_vehicles_in_green_lanes = len(vehicles_in_green_lanes)
 
-        vehicleIDList = traci.vehicle.getIDList()
-        for each_vehicle in vehicleIDList:
-            vehicle_lane = traci.vehicle.getLaneID(each_vehicle)
-            # if vehicle is in the stopped lane
-            if vehicle_lane in lanes_in_G2H1 or vehicle_lane in lanes_in_D1B2:
-                vehicle_accumulated_waiting_time = traci.vehicle.getAccumulatedWaitingTime(each_vehicle)
-                if vehicle_accumulated_waiting_time > 0:
-                    accumulated_waiting_time.append(vehicle_accumulated_waiting_time)
-                    print('Accumulated waiting time => ' + str(vehicle_accumulated_waiting_time))
+        # Get waiting time of cars in red-light lane
+        max_waiting_time_in_red_lanes = vehicle_waiting_time_in_lane(vehicles_in_red_lanes)
+
+        # Get emergency vehicles count
+        emv_current_lane = get_emv(vehicles_in_green_lanes)
+        emv_other_lane = get_emv(vehicles_in_red_lanes)
+
+        no_emv_current_lane = len(emv_current_lane)
+        no_emv_other_lane = len(emv_other_lane)
+
+        print('nov red lane' + str(no_vehicles_in_red_lanes))
+        print('nov green lane' + str(no_vehicles_in_green_lanes))
+        print('waiting time red lane' + str(max_waiting_time_in_red_lanes))
+        print('emv red lane' + str(no_emv_other_lane))
+        print('emv green lane'+ str(no_emv_current_lane))
+
+        traffic_command = fuzzy_controller_function(no_vehicles_in_red_lanes,
+                                                    no_vehicles_in_green_lanes,
+                                                    max_waiting_time_in_red_lanes,
+                                                    no_emv_current_lane, no_emv_other_lane)
+
+        print(traffic_command)
+
+        if traffic_command >= 0.5:
+            print('sumo changed the traffic light')
+            traci.trafficlight.setPhaseDuration(trafficLightID, 1.0)
+        print('')
 
 
-
-
-    # if emv != 0:
-    #    print('!!!WARNING EMV ON THE ROAD OVER' + emv)
-    # lightColor = traci.trafficlight.getRedYellowGreenState(trafficLightID[0]);
-    # print('lightColor type')
-    # print(lightColor)
-
-    # laneWaitingTime = traci.lane.getWaitingTime("H1_0")
-    # print('totalWaitingTime => ' + str(totalWaitingTime))
     traci.simulationStep()
     step += 1
 
-
-print('Accumulated waiting time ')
-print(accumulated_waiting_time)
-print('\n\n\n\n')
-print(np.sort(accumulated_waiting_time))
-# print('laneCount')
-# print(laneCount)
-# print('totalWaitingTime')
-# print(totalWaitingTime)
-# print("vehicleIDList")
-# print(vehicleIDList)
 traci.close()
-
+input('Press any key to exit')
