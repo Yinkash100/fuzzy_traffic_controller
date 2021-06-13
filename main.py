@@ -13,9 +13,9 @@ def get_emv(vehicleIDList):
 
 def current_moving_lane():
     if traci.trafficlight.getRedYellowGreenState(trafficLightID).startswith('rrrr'):
-        return 'x'
+        return 'WE'
     else:
-        return 'y'
+        return 'NS'
 
 
 def get_lane_lists(traffic_lanes_in_x_axis, traffic_lanes_in_y_axis):
@@ -31,7 +31,7 @@ def get_lane_lists(traffic_lanes_in_x_axis, traffic_lanes_in_y_axis):
         list of lanes blocked by traffic
 
     """
-    if current_moving_lane() == 'x':
+    if current_moving_lane() == 'WE':
         return traffic_lanes_in_x_axis, traffic_lanes_in_y_axis
     else:
         return traffic_lanes_in_y_axis, traffic_lanes_in_x_axis
@@ -90,6 +90,13 @@ emv_waiting_time = 0
 
 trafficLightID = traci.trafficlight.getIDList()[0]
 
+YELLOW_TIME = 3
+GREEN_TIME = 60
+NS_GREEN_STATE = "GGGgrrrrGGGgrrrr"
+NS_YELLOW_STATE = "YYYyrrrrYYYyrrrr"
+WE_GREEN_STATE = "rrrrGGGgrrrrGGGg"
+WE_YELLOW_STATE = "rrrrYYYyrrrrYYYy"
+
 step = 0
 # while step < 16000:
 while step < 1500:
@@ -130,8 +137,14 @@ while step < 1500:
         print(traffic_command)
 
         if traffic_command >= 0.5:
+            if current_moving_lane() == 'WE':
+                yellow = True
+                traci.trafficlight.setRedYellowGreenState("C", NS_GREEN_STATE)
+            else:
+                yellow = True
+                traci.trafficlight.setRedYellowGreenState("C", WE_GREEN_STATE)
+
             print('sumo changed the traffic light')
-            traci.trafficlight.setPhaseDuration(trafficLightID, 1.0)
     traci.simulationStep()
     step += 1
 
