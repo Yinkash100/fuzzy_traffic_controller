@@ -94,7 +94,7 @@ step = 0
 # while step < 16000:
 while step < 1500:
     # run traffic light controller code after every five steps ( to optimize speed)
-    if (step > 0) and (step % 25) == 0:
+    if (step > 0) and (step % 7) == 0:
         # The get current lane the traffic light is passing
         lanes_currently_moving, lanes_stopped_by_light = get_lane_lists(lanes_in_D1B2, lanes_in_G2H1)
 
@@ -132,9 +132,6 @@ while step < 1500:
         if traffic_command >= 0.5:
             print('sumo changed the traffic light')
             traci.trafficlight.setPhaseDuration(trafficLightID, 1.0)
-        print('')
-
-
     traci.simulationStep()
     step += 1
 
