@@ -91,8 +91,7 @@ emv_waiting_time = 0
 trafficLightID = traci.trafficlight.getIDList()[0]
 
 step = 0
-# while step < 16000:
-while step < 1500:
+while step < 16000:
     # run traffic light controller code after every five steps ( to optimize speed)
     if (step > 0) and (step % 7) == 0:
         # The get current lane the traffic light is passing
@@ -131,7 +130,6 @@ while step < 1500:
 
         if traffic_command >= 0.5:
             print('sumo changed the traffic light')
-            traci.trafficlight.setPhaseDuration(trafficLightID, 1.0)
     traci.simulationStep()
     step += 1
 
