@@ -63,16 +63,6 @@ while step < 16000:
 
     no_emv_current_lane = len(emv_current_lane)
     no_emv_other_lane = len(emv_other_lane)
-
-    # run traffic light controller code after every five steps ( to optimize speed)
-    if (step > 0) and (step % 7) == 0:
-        traffic_command = fuzzy_controller_function(no_vehicles_in_red_lanes,
-                                                    no_vehicles_in_green_lanes,
-                                                    max_waiting_time_in_red_lanes,
-                                                    no_emv_current_lane, no_emv_other_lane)
-
-        if traffic_command >= 0.5:
-            print('sumo changed the traffic light')
     traci.simulationStep()
     step += 1
 
