@@ -57,11 +57,6 @@ while step < 16000:
     # waiting time of emergency vehicles in red light
     emv_waiting_time += get_emv_waiting_time(vehicles_in_red_lanes)
 
-    print("sum_of_vehicle_waiting_time")
-    print(total_vehicle_waiting_time)
-    print("emv_waiting_time")
-    print(emv_waiting_time)
-
     # Get emergency vehicles count
     emv_current_lane = get_emv(vehicles_in_green_lanes)
     emv_other_lane = get_emv(vehicles_in_red_lanes)
@@ -69,21 +64,12 @@ while step < 16000:
     no_emv_current_lane = len(emv_current_lane)
     no_emv_other_lane = len(emv_other_lane)
 
-
     # run traffic light controller code after every five steps ( to optimize speed)
     if (step > 0) and (step % 7) == 0:
-        print('nov red lane' + str(no_vehicles_in_red_lanes))
-        print('nov green lane' + str(no_vehicles_in_green_lanes))
-        print('waiting time red lane' + str(max_waiting_time_in_red_lanes))
-        print('emv red lane' + str(no_emv_other_lane))
-        print('emv green lane'+ str(no_emv_current_lane))
-
         traffic_command = fuzzy_controller_function(no_vehicles_in_red_lanes,
                                                     no_vehicles_in_green_lanes,
                                                     max_waiting_time_in_red_lanes,
                                                     no_emv_current_lane, no_emv_other_lane)
-
-        print(traffic_command)
 
         if traffic_command >= 0.5:
             if current_moving_lane(trafficLightID) == 'WE':
@@ -93,7 +79,6 @@ while step < 16000:
                 yellow = True
                 traci.trafficlight.setRedYellowGreenState("C", WE_GREEN_STATE)
 
-            print('sumo changed the traffic light')
     traci.simulationStep()
     step += 1
 
