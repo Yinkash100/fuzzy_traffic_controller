@@ -44,6 +44,8 @@ traffic_light_signal['need-switching'] = fuzz.smf(traffic_light_signal.universe,
 traffic_light_signal['okay'] = fuzz.zmf(traffic_light_signal.universe, 0, 1)
 # traffic_light_signal.view()
 
+##### FUNCTIONS THAT PASSS IN THE INPUT ####
+### no_vehicle_current_lane too-small small much  too-much
 
 rule0a = ctrl.Rule(emergency_vehicles_in_current_lane['much'] & emergency_vehicles_in_other_lane['absent']
                    | emergency_vehicles_in_current_lane['present'] & emergency_vehicles_in_other_lane['absent']
@@ -89,9 +91,6 @@ def fuzzy_controller_function(no_vehicles_in_red_lanes,
                               no_vehicles_in_green_lanes,
                               max_waiting_time_in_red_lanes,
                               emv_current_lane, emv_other_lane):
-    ##### FUNCTIONS THAT PASSS IN THE INPUT ####
-    ### no_vehicle_current_lane too-small small much  too-much
-
     traffic_status.input['no_vehicle_current_lane'] = int(no_vehicles_in_red_lanes)
     traffic_status.input['no_vehicle_other_lane'] = int(no_vehicles_in_green_lanes)
     traffic_status.input['emergency_vehicles_in_current_lane'] = int(emv_current_lane)
