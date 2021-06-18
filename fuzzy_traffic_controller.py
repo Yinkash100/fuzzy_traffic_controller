@@ -57,35 +57,35 @@ rule0b = ctrl.Rule(emergency_vehicles_in_current_lane['absent'] & emergency_vehi
                    | emergency_vehicles_in_current_lane['absent'] & emergency_vehicles_in_other_lane['much'],
                    traffic_light_signal['need-switching'])
 
-rule2a = ctrl.Rule(no_vehicle_current_lane['small'] & no_vehicle_other_lane['too-small']
+rule1a = ctrl.Rule(no_vehicle_current_lane['small'] & no_vehicle_other_lane['too-small']
                    | no_vehicle_current_lane['much'] & no_vehicle_other_lane['too-small']
                    | no_vehicle_current_lane['too-much'] & no_vehicle_other_lane['too-small'],
                    traffic_light_signal['okay'])
 
-rule2b = ctrl.Rule(no_vehicle_current_lane['much'] & no_vehicle_other_lane['small']
+rule1b = ctrl.Rule(no_vehicle_current_lane['much'] & no_vehicle_other_lane['small']
                    | no_vehicle_current_lane['too-much'] & no_vehicle_other_lane['small']
                    | no_vehicle_current_lane['too-much'] & no_vehicle_other_lane['much'],
                    traffic_light_signal['okay'])
 
-rule2c = ctrl.Rule(no_vehicle_current_lane['too-small'] & no_vehicle_other_lane['small']
+rule1c = ctrl.Rule(no_vehicle_current_lane['too-small'] & no_vehicle_other_lane['small']
                    | no_vehicle_current_lane['too-small'] & no_vehicle_other_lane['much']
                    | no_vehicle_current_lane['small'] & no_vehicle_other_lane['much'],
                    traffic_light_signal['need-switching'])
 
-rule2d = ctrl.Rule(no_vehicle_current_lane['too-small'] & no_vehicle_other_lane['too-much']
+rule1d = ctrl.Rule(no_vehicle_current_lane['too-small'] & no_vehicle_other_lane['too-much']
                    | no_vehicle_current_lane['small'] & no_vehicle_other_lane['too-much']
                    | no_vehicle_current_lane['much'] & no_vehicle_other_lane['too-much'],
                    traffic_light_signal['need-switching'])
 
-rule3a = ctrl.Rule(waiting_time_current_lane['negligible'] | waiting_time_current_lane['okay']
+rule2a = ctrl.Rule(waiting_time_current_lane['negligible'] | waiting_time_current_lane['okay']
                    , traffic_light_signal['okay'])
 
-rule3b = ctrl.Rule(waiting_time_current_lane['much'] | waiting_time_current_lane['too-much']
+rule2b = ctrl.Rule(waiting_time_current_lane['much'] | waiting_time_current_lane['too-much']
                    , traffic_light_signal['need-switching'])
 
-traffic_light_ctrl = ctrl.ControlSystem([rule0a, rule0b, rule2a, rule2b, rule2c, rule2d, rule3a, rule3b])
+traffic_light_ctrl = ctrl.ControlSystem([rule0a, rule0b, rule1a, rule1b, rule1c, rule1d, rule2a, rule2b])
+traffic_light_ctrl.view()
 traffic_status = ctrl.ControlSystemSimulation(traffic_light_ctrl)
-
 
 def fuzzy_controller_function(no_vehicles_in_red_lanes,
                               no_vehicles_in_green_lanes,

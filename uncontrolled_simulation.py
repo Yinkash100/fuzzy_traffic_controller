@@ -1,6 +1,5 @@
 import os, sys
-from fuzzy_traffic_controller import fuzzy_controller_function
-from helper import *
+from helper_functions import *
 
 
 # check if sumo home is defined
@@ -11,7 +10,7 @@ else:
     sys.exit("please declare environment variable 'SUMO_HOME'")
 
 sumoBinary = "sumo-gui"
-sumoCmd = [sumoBinary, "-c", "4-junction.sumocfg", "--start"]
+sumoCmd = [sumoBinary, "-c", "4-junction/4-junction.sumocfg", "--start"]
 
 import traci
 
