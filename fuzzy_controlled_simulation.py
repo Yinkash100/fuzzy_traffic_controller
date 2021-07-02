@@ -1,4 +1,5 @@
 import os, sys
+import pickle
 from fuzzy_traffic_controller import fuzzy_controller_function
 from helper_functions import *
 
@@ -34,6 +35,9 @@ NS_YELLOW_STATE = "YYYyrrrrYYYyrrrr"
 WE_GREEN_STATE = "rrrrGGGgrrrrGGGg"
 WE_YELLOW_STATE = "rrrrYYYyrrrrYYYy"
 
+
+vehicles_waiting_time_list = []
+
 step = 0
 while step < 16000:
     # The get current lane the traffic light is passing
@@ -47,15 +51,19 @@ while step < 16000:
     no_vehicles_in_red_lanes = len(vehicles_in_red_lanes)
     no_vehicles_in_green_lanes = len(vehicles_in_green_lanes)
 
+
     # Get waiting time of cars in red-light lane
     vehicles_waiting_time = vehicle_waiting_time_in_lane(vehicles_in_red_lanes)
     if vehicles_waiting_time != 0:
         vehicles_waiting_time.sort()
         max_waiting_time_in_red_lanes = vehicles_waiting_time[-1]
-        total_vehicle_waiting_time += sum(vehicles_waiting_time)
+        sum_wt_time = sum(vehicles_waiting_time)
+        total_vehicle_waiting_time += sum_wt_time
+        vehicles_waiting_time_list.append(sum_wt_time);
 
     # waiting time of emergency vehicles in red light
-    emv_waiting_time += get_emv_waiting_time(vehicles_in_red_lanes)
+    current_emv_waiting_time = get_emv_waiting_time(vehicles_in_red_lanes)
+    emv_waiting_time +=  current_emv_waiting_time
 
     # Get emergency vehicles count
     emv_current_lane = get_emv(vehicles_in_green_lanes)
@@ -64,28 +72,28 @@ while step < 16000:
     no_emv_current_lane = len(emv_current_lane)
     no_emv_other_lane = len(emv_other_lane)
 
-    # run traffic light controller code after every five steps ( to optimize speed)
-    if yellow_time > 0:
-        if yellow_time == 1:
-            if current_moving_lane(trafficLightID) == 'WE':
-                traci.trafficlight.setRedYellowGreenState("C", NS_GREEN_STATE)
-            else:
-                traci.trafficlight.setRedYellowGreenState("C", WE_GREEN_STATE)
-        yellow_time -= 1
-    elif (step > 0) and (step % 7) == 0:
+    # # run traffic light controller code after every five steps ( to optimize speed)
+    # if yellow_time > 0:
+    #     if yellow_time == 1:
+    #         if current_moving_lane(trafficLightID) == 'WE':
+    #             traci.trafficlight.setRedYellowGreenState("C", NS_GREEN_STATE)
+    #         else:
+    #             traci.trafficlight.setRedYellowGreenState("C", WE_GREEN_STATE)
+    #     yellow_time -= 1
+    if (step > 0) and (step % 7) == 0:
         traffic_command = fuzzy_controller_function(no_vehicles_in_red_lanes,
                                                     no_vehicles_in_green_lanes,
                                                     max_waiting_time_in_red_lanes,
                                                     no_emv_current_lane, no_emv_other_lane)
 
         if traffic_command >= 0.5:
-            if current_moving_lane(trafficLightID) == 'WE':
-                yellow_time = 1
-                traci.trafficlight.setRedYellowGreenState("C", WE_YELLOW_STATE)
-            else:
-                yellow_time = 1
-                traci.trafficlight.setRedYellowGreenState("C", NS_YELLOW_STATE)
-
+            traci.trafficlight.setPhaseDuration("C", 0)
+            # if current_moving_lane(trafficLightID) == 'WE':
+            #     yellow_time = 1
+            #     traci.trafficlight.setRedYellowGreenState("C", WE_YELLOW_STATE)
+            # else:
+            #     yellow_time = 1
+            #     traci.trafficlight.setRedYellowGreenState("C", NS_YELLOW_STATE)
 
     traci.simulationStep()
     step += 1
@@ -95,4 +103,9 @@ print("total_vehicle_waiting_time")
 print(total_vehicle_waiting_time)
 print("emv_waiting_time")
 print(emv_waiting_time)
+
+with open("vehicles_waiting_time.txt", "wb") as fp:
+    pickle.dump(vehicles_waiting_time_list, fp)
+
+
 input('Press any key to exit')

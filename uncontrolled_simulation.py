@@ -1,4 +1,5 @@
 import os, sys
+import pickle
 from helper_functions import *
 
 
@@ -33,6 +34,8 @@ NS_YELLOW_STATE = "YYYyrrrrYYYyrrrr"
 WE_GREEN_STATE = "rrrrGGGgrrrrGGGg"
 WE_YELLOW_STATE = "rrrrYYYyrrrrYYYy"
 
+vehicles_waiting_time_list = []
+
 step = 0
 while step < 16000:
     # The get current lane the traffic light is passing
@@ -42,18 +45,25 @@ while step < 16000:
     vehicles_in_red_lanes = get_vehicles_in_lane(lanes_stopped_by_light)
     vehicles_in_green_lanes = get_vehicles_in_lane(lanes_currently_moving)
 
+
+
+
     # Get no of cars in both lane
     no_vehicles_in_red_lanes = len(vehicles_in_red_lanes)
     no_vehicles_in_green_lanes = len(vehicles_in_green_lanes)
 
     # Get waiting time of cars in red-light lane
     vehicles_waiting_time = vehicle_waiting_time_in_lane(vehicles_in_red_lanes)
+
     if vehicles_waiting_time != 0:
         vehicles_waiting_time.sort()
         max_waiting_time_in_red_lanes = vehicles_waiting_time[-1]
-        total_vehicle_waiting_time += sum(vehicles_waiting_time)
+        sum_wt_time = sum(vehicles_waiting_time)
+        total_vehicle_waiting_time += sum_wt_time
+        vehicles_waiting_time_list.append(sum_wt_time);
 
-    # waiting time of emergency vehicles in red light
+
+# waiting time of emergency vehicles in red light
     emv_waiting_time += get_emv_waiting_time(vehicles_in_red_lanes)
 
     # Get emergency vehicles count
@@ -71,3 +81,7 @@ print(total_vehicle_waiting_time)
 print("emv_waiting_time")
 print(emv_waiting_time)
 input('Press any key to exit')
+
+with open("vehicles_waiting_time_no-fuzz.txt", "wb") as fp:
+    pickle.dump(vehicles_waiting_time_list, fp)
+
