@@ -1,10 +1,20 @@
 import pickle
 import matplotlib.pyplot as plt
 
+
+def mean_value(list):
+    return sum(list)/len(list)
+
+
+
 with open("vehicle_count_red_lane.txt", "rb") as fp:
     vehicle_count_fuzzy = pickle.load(fp)
 
 a = vehicle_count_fuzzy[:100]
+
+mean_vc_fuzzy = mean_value(vehicle_count_fuzzy)
+print('avg_vc_fuzzy')
+print(mean_vc_fuzzy)
 
 
 with open("vehicle_count_red_lane_no-fuz.txt", "rb") as fp:
@@ -12,6 +22,10 @@ with open("vehicle_count_red_lane_no-fuz.txt", "rb") as fp:
 
 b = vehicle_count_no_fuzzy[:100]
 
+
+mean_vc = mean_value(vehicle_count_no_fuzzy)
+print('avg_vc')
+print(mean_vc)
 
 # i = 0
 # while i < 500:

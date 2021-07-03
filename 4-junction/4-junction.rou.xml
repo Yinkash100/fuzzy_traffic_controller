@@ -23,6 +23,10 @@
   <route id="route07" edges="A2 B2 D2 E2"/>
   <route id="route08" edges="I1 H1 G1 F1"/>
 
+    <route id="route09" edges="A2 B2 H2 I2"/>
+    <route id="route10" edges="F2 G2 B1 A1"/>
+    <route id="route11" edges="D1 E1 G1 F1"/>
+    <route id="route12" edges="I1 H1 D2 E2"/>
   <!-- ALL VEHICLES ON ROUTE1 -->
  <flow id="car-route1" number="400" begin="0" probability="0.4" type="private_car">
     <route edges="A2 B2 G1 F1" />
@@ -317,5 +321,153 @@
   <flow id="vip-route8" number="2" begin="0" probability="0.002" type="vip">
       <route edges="I1 H1 G1 F1"/>
   </flow>
+
+
+
+    <!-- ALL VEHICLES ON ROUTE9 -->
+    <flow id="car-route8" number="400" begin="0" probability="0.4" type="private_car">
+        <route edges="A2 B2 H2 I2"/>
+    </flow>
+    <flow id="bus-route8" number="200" begin="0" probability="0.2" type="danfo">
+        <route edges="A2 B2 H2 I2" />
+    </flow>
+    <flow id="motorcycle-route8" number="170" begin="0" probability="0.17" type="motorcycle">
+        <route edges="A2 B2 H2 I2"/>
+    </flow>
+    <flow id="brt-route8" number="100" begin="0" probability="0.1" type="brt">
+        <route edges="A2 B2 H2 I2"/>
+    </flow>
+    <flow id="taxi-route8" number="70" begin="0" probability="0.07" type="taxi">
+        <route edges="A2 B2 H2 I2"/>
+    </flow>
+    <flow id="trailer-route8" number="2" begin="0" probability="0.002" type="trailer">
+        <route edges="A2 B2 H2 I2"/>
+    </flow>
+    <flow id="delivery-route8" number="20" begin="0" probability="0.02" type="delivery">
+        <route edges="A2 B2 H2 I2"/>
+    </flow>
+    <flow id="bicycle-route8" number="16" begin="0" probability="0.016" type="bicycle">
+        <route edges="I1 H1 G1 F1"/>
+    </flow>
+    <flow id="truck-route8" number="10" begin="0" probability="0.01" type="truck">
+        <route edges="A2 B2 H2 I2"/>
+    </flow>
+    <flow id="emergency-route8" number="10" begin="0" probability="0.01" type="emergency">
+        <route edges="A2 B2 H2 I2"/>
+    </flow>
+    <flow id="vip-route8" number="2" begin="0" probability="0.002" type="vip">
+        <route edges="A2 B2 H2 I2"/>
+    </flow>
+
+
+
+
+    <!-- ALL VEHICLES ON ROUTE 10 -->
+    <flow id="car-route8" number="400" begin="0" probability="0.4" type="private_car">
+        <route edges="F2 G2 B1 A1"/>
+    </flow>
+    <flow id="bus-route8" number="200" begin="0" probability="0.2" type="danfo">
+        <route edges="F2 G2 B1 A1" />
+    </flow>
+    <flow id="motorcycle-route8" number="170" begin="0" probability="0.17" type="motorcycle">
+        <route edges="F2 G2 B1 A1"/>
+    </flow>
+    <flow id="brt-route8" number="100" begin="0" probability="0.1" type="brt">
+        <route edges="F2 G2 B1 A1"/>
+    </flow>
+    <flow id="taxi-route8" number="70" begin="0" probability="0.07" type="taxi">
+        <route edges="F2 G2 B1 A1"/>
+    </flow>
+    <flow id="trailer-route8" number="2" begin="0" probability="0.002" type="trailer">
+        <route edges="F2 G2 B1 A1"/>
+    </flow>
+    <flow id="delivery-route8" number="20" begin="0" probability="0.02" type="delivery">
+        <route edges="F2 G2 B1 A1"/>
+    </flow>
+    <flow id="bicycle-route8" number="16" begin="0" probability="0.016" type="bicycle">
+        <route edges="F2 G2 B1 A1"/>
+    </flow>
+    <flow id="truck-route8" number="10" begin="0" probability="0.01" type="truck">
+        <route edges="F2 G2 B1 A1"/>
+    </flow>
+    <flow id="emergency-route8" number="10" begin="0" probability="0.01" type="emergency">
+        <route edges="F2 G2 B1 A1"/>
+    </flow>
+    <flow id="vip-route8" number="2" begin="0" probability="0.002" type="vip">
+        <route edges="F2 G2 B1 A1"/>
+    </flow>
+
+
+    <!-- ALL VEHICLES ON ROUTE 11 -->
+    <flow id="car-route8" number="400" begin="0" probability="0.4" type="private_car">
+        <route edges="D1 E1 G1 F1"/>
+    </flow>
+    <flow id="bus-route8" number="200" begin="0" probability="0.2" type="danfo">
+        <route edges="D1 E1 G1 F1" />
+    </flow>
+    <flow id="motorcycle-route8" number="170" begin="0" probability="0.17" type="motorcycle">
+        <route edges="D1 E1 G1 F1"/>
+    </flow>
+    <flow id="brt-route8" number="100" begin="0" probability="0.1" type="brt">
+        <route edges="D1 E1 G1 F1"/>
+    </flow>
+    <flow id="taxi-route8" number="70" begin="0" probability="0.07" type="taxi">
+        <route edges="D1 E1 G1 F1"/>
+    </flow>
+    <flow id="trailer-route8" number="2" begin="0" probability="0.002" type="trailer">
+        <route edges="D1 E1 G1 F1"/>
+    </flow>
+    <flow id="delivery-route8" number="20" begin="0" probability="0.02" type="delivery">
+        <route edges="D1 E1 G1 F1"/>
+    </flow>
+    <flow id="bicycle-route8" number="16" begin="0" probability="0.016" type="bicycle">
+        <route edges="D1 E1 G1 F1"/>
+    </flow>
+    <flow id="truck-route8" number="10" begin="0" probability="0.01" type="truck">
+        <route edges="D1 E1 G1 F1"/>
+    </flow>
+    <flow id="emergency-route8" number="10" begin="0" probability="0.01" type="emergency">
+        <route edges="D1 E1 G1 F1"/>
+    </flow>
+    <flow id="vip-route8" number="2" begin="0" probability="0.002" type="vip">
+        <route edges="D1 E1 G1 F1"/>
+    </flow>
+
+
+
+    <!-- ALL VEHICLES ON ROUTE 12 -->
+    <flow id="car-route8" number="400" begin="0" probability="0.4" type="private_car">
+        <route edges="I1 H1 D2 E2"/>
+    </flow>
+    <flow id="bus-route8" number="200" begin="0" probability="0.2" type="danfo">
+        <route edges="I1 H1 D2 E2" />
+    </flow>
+    <flow id="motorcycle-route8" number="170" begin="0" probability="0.17" type="motorcycle">
+        <route edges="I1 H1 D2 E2"/>
+    </flow>
+    <flow id="brt-route8" number="100" begin="0" probability="0.1" type="brt">
+        <route edges="I1 H1 D2 E2"/>
+    </flow>
+    <flow id="taxi-route8" number="70" begin="0" probability="0.07" type="taxi">
+        <route edges="I1 H1 D2 E2"/>
+    </flow>
+    <flow id="trailer-route8" number="2" begin="0" probability="0.002" type="trailer">
+        <route edges="I1 H1 D2 E2"/>
+    </flow>
+    <flow id="delivery-route8" number="20" begin="0" probability="0.02" type="delivery">
+        <route edges="I1 H1 D2 E2"/>
+    </flow>
+    <flow id="bicycle-route8" number="16" begin="0" probability="0.016" type="bicycle">
+        <route edges="I1 H1 D2 E2"/>
+    </flow>
+    <flow id="truck-route8" number="10" begin="0" probability="0.01" type="truck">
+        <route edges="I1 H1 D2 E2"/>
+    </flow>
+    <flow id="emergency-route8" number="10" begin="0" probability="0.01" type="emergency">
+        <route edges="I1 H1 D2 E2"/>
+    </flow>
+    <flow id="vip-route8" number="2" begin="0" probability="0.002" type="vip">
+        <route edges="I1 H1 D2 E2"/>
+    </flow>
 </routes>
 
