@@ -6,7 +6,7 @@ def mean_value(list):
     return sum(list)/len(list)
 
 
-with open("emv_waiting_time.txt", "rb") as fp:
+with open("combined_emv_waiting_time.txt", "rb") as fp:
     emv_wt_fuzzy = pickle.load(fp)
 
 a = emv_wt_fuzzy[:500]
@@ -15,7 +15,7 @@ mean_wmv_wt = mean_value(emv_wt_fuzzy)
 print('avg_emv_wt')
 print(mean_wmv_wt)
 
-with open("emv_waiting_time_no-fuz.txt", "rb") as fp:
+with open("combined_emv_waiting_time_no-fuzz.txt", "rb") as fp:
     emv_wt = pickle.load(fp)
 b = emv_wt[:500]
 

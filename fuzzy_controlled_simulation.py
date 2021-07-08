@@ -1,4 +1,4 @@
-import os, sys
+# import os, sys
 import pickle
 from fuzzy_traffic_controller import fuzzy_controller_function
 from helper_functions import *
@@ -15,11 +15,7 @@ sumoBinary = "sumo-gui"
 sumoCmd = [sumoBinary, "-c", "4-junction/4-junction.sumocfg", "--start"]
 
 import traci
-
-
-
 traci.start(sumoCmd)
-
 
 lanes_in_G2H1 = ['F2_0', 'F2_1', 'G2_0', 'G2_1', 'H1_0', 'H1_1', 'I1_0', 'I1_1']
 lanes_in_D1B2 = ['A2_0', 'A2_1', 'B2_0', 'B2_1', 'D1_0', 'D1_1', 'E1_0', 'E1_1']
@@ -29,17 +25,12 @@ emv_waiting_time = 0
 
 trafficLightID = traci.trafficlight.getIDList()[0]
 
-yellow_time = 0
-NS_GREEN_STATE = "GGGgrrrrGGGgrrrr"
-NS_YELLOW_STATE = "YYYyrrrrYYYyrrrr"
-WE_GREEN_STATE = "rrrrGGGgrrrrGGGg"
-WE_YELLOW_STATE = "rrrrYYYyrrrrYYYy"
-
-
-vehicles_waiting_time_list = []
+amount_moving_vehicles = []
+amount_stopped_vehicles = []
 
 step = 0
-while step < 16000:
+while step < 32000:
+# while step < 600:
     # The get current lane the traffic light is passing
     lanes_currently_moving, lanes_stopped_by_light = get_lane_lists(lanes_in_D1B2, lanes_in_G2H1, trafficLightID)
 
@@ -51,6 +42,8 @@ while step < 16000:
     no_vehicles_in_red_lanes = len(vehicles_in_red_lanes)
     no_vehicles_in_green_lanes = len(vehicles_in_green_lanes)
 
+    amount_moving_vehicles.append(no_vehicles_in_red_lanes)
+    amount_stopped_vehicles.append(no_vehicles_in_green_lanes)
 
     # Get waiting time of cars in red-light lane
     vehicles_waiting_time = vehicle_waiting_time_in_lane(vehicles_in_red_lanes)
@@ -59,11 +52,13 @@ while step < 16000:
         max_waiting_time_in_red_lanes = vehicles_waiting_time[-1]
         sum_wt_time = sum(vehicles_waiting_time)
         total_vehicle_waiting_time += sum_wt_time
-        vehicles_waiting_time_list.append(sum_wt_time);
 
     # waiting time of emergency vehicles in red light
-    current_emv_waiting_time = get_emv_waiting_time(vehicles_in_red_lanes)
-    emv_waiting_time +=  current_emv_waiting_time
+    emv_waiting_time_red_lane = get_emv_waiting_time(vehicles_in_red_lanes)
+    emv_waiting_time_green_lane = get_emv_waiting_time(vehicles_in_green_lanes)
+
+    emv_waiting_time +=  emv_waiting_time_red_lane
+    emv_waiting_time +=  emv_waiting_time_green_lane
 
     # Get emergency vehicles count
     emv_current_lane = get_emv(vehicles_in_green_lanes)
@@ -72,29 +67,20 @@ while step < 16000:
     no_emv_current_lane = len(emv_current_lane)
     no_emv_other_lane = len(emv_other_lane)
 
-    # # run traffic light controller code after every five steps ( to optimize speed)
-    # if yellow_time > 0:
-    #     if yellow_time == 1:
-    #         if current_moving_lane(trafficLightID) == 'WE':
-    #             traci.trafficlight.setRedYellowGreenState("C", NS_GREEN_STATE)
-    #         else:
-    #             traci.trafficlight.setRedYellowGreenState("C", WE_GREEN_STATE)
-    #     yellow_time -= 1
     if (step > 0) and (step % 7) == 0:
         traffic_command = fuzzy_controller_function(no_vehicles_in_red_lanes,
                                                     no_vehicles_in_green_lanes,
                                                     max_waiting_time_in_red_lanes,
+                                                    emv_waiting_time_red_lane, emv_waiting_time_green_lane,
                                                     no_emv_current_lane, no_emv_other_lane)
 
         if traffic_command >= 0.5:
-            traci.trafficlight.setPhaseDuration("C", 0)
-            # if current_moving_lane(trafficLightID) == 'WE':
-            #     yellow_time = 1
-            #     traci.trafficlight.setRedYellowGreenState("C", WE_YELLOW_STATE)
-            # else:
-            #     yellow_time = 1
-            #     traci.trafficlight.setRedYellowGreenState("C", NS_YELLOW_STATE)
-
+            current_phase = traci.trafficlight.getPhase("C")
+            if current_phase < 5:
+                traci.trafficlight.setPhase("C", 4)
+            else:
+                traci.trafficlight.setPhase("C", 9)
+        print('done')
     traci.simulationStep()
     step += 1
 
@@ -104,8 +90,11 @@ print(total_vehicle_waiting_time)
 print("emv_waiting_time")
 print(emv_waiting_time)
 
-with open("vehicles_waiting_time.txt", "wb") as fp:
-    pickle.dump(vehicles_waiting_time_list, fp)
 
+with open("amount_moving_vehicles.txt", "wb") as fp:
+    pickle.dump(amount_moving_vehicles, fp)
+
+with open("amount_stopped_vehicles.txt", "wb") as fp:
+    pickle.dump(amount_stopped_vehicles, fp)
 
 input('Press any key to exit')

@@ -28,16 +28,12 @@ emv_waiting_time = 0
 
 trafficLightID = traci.trafficlight.getIDList()[0]
 
-GREEN_TIME = 60
-NS_GREEN_STATE = "GGGgrrrrGGGgrrrr"
-NS_YELLOW_STATE = "YYYyrrrrYYYyrrrr"
-WE_GREEN_STATE = "rrrrGGGgrrrrGGGg"
-WE_YELLOW_STATE = "rrrrYYYyrrrrYYYy"
-
-vehicles_waiting_time_list = []
+amount_moving_vehicles = []
+amount_stopped_vehicles = []
 
 step = 0
-while step < 16000:
+while step < 32000:
+# while step < 600:
     # The get current lane the traffic light is passing
     lanes_currently_moving, lanes_stopped_by_light = get_lane_lists(lanes_in_D1B2, lanes_in_G2H1, trafficLightID)
 
@@ -52,6 +48,9 @@ while step < 16000:
     no_vehicles_in_red_lanes = len(vehicles_in_red_lanes)
     no_vehicles_in_green_lanes = len(vehicles_in_green_lanes)
 
+    amount_moving_vehicles.append(no_vehicles_in_red_lanes)
+    amount_stopped_vehicles.append(no_vehicles_in_green_lanes)
+
     # Get waiting time of cars in red-light lane
     vehicles_waiting_time = vehicle_waiting_time_in_lane(vehicles_in_red_lanes)
 
@@ -60,11 +59,13 @@ while step < 16000:
         max_waiting_time_in_red_lanes = vehicles_waiting_time[-1]
         sum_wt_time = sum(vehicles_waiting_time)
         total_vehicle_waiting_time += sum_wt_time
-        vehicles_waiting_time_list.append(sum_wt_time);
 
+    # waiting time of emergency vehicles in red light
+    emv_waiting_time_red_lane = get_emv_waiting_time(vehicles_in_red_lanes)
+    emv_waiting_time_green_lane = get_emv_waiting_time(vehicles_in_green_lanes)
 
-# waiting time of emergency vehicles in red light
-    emv_waiting_time += get_emv_waiting_time(vehicles_in_red_lanes)
+    emv_waiting_time +=  emv_waiting_time_red_lane
+    emv_waiting_time +=  emv_waiting_time_green_lane
 
     # Get emergency vehicles count
     emv_current_lane = get_emv(vehicles_in_green_lanes)
@@ -82,6 +83,8 @@ print("emv_waiting_time")
 print(emv_waiting_time)
 input('Press any key to exit')
 
-with open("vehicles_waiting_time_no-fuzz.txt", "wb") as fp:
-    pickle.dump(vehicles_waiting_time_list, fp)
+with open("amount_moving_vehicles_no-fuzz.txt", "wb") as fp:
+    pickle.dump(amount_moving_vehicles, fp)
 
+with open("amount_stopped_vehicles_no-fuzz.txt", "wb") as fp:
+    pickle.dump(amount_stopped_vehicles, fp)

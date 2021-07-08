@@ -6,7 +6,7 @@ def mean_value(list):
     return sum(list)/len(list)
 
 
-with open("vehicle_count_green_lane.txt", "rb") as fp:
+with open("amount_moving_vehicles.txt", "rb") as fp:
     vehicle_count_fuzzy = pickle.load(fp)
 
 a = vehicle_count_fuzzy[:500]
@@ -17,7 +17,7 @@ print('avg_vc_fuzzy')
 print(mean_vc_fuzzy)
 
 
-with open("vehicle_count_green_lane_no-fuz.txt", "rb") as fp:
+with open("amount_moving_vehicles_no-fuzz.txt", "rb") as fp:
     vehicle_count_no_fuzzy = pickle.load(fp)
 
 b = vehicle_count_no_fuzzy[:500]
