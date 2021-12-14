@@ -68,8 +68,8 @@ def vehicle_waiting_time_in_lane(vehicle_list):
 
 
 def get_emv_waiting_time(vehicle_list):
-    emvs_stopped_by_light = get_emv(vehicle_list)
-    emv_waiting_time = vehicle_waiting_time_in_lane(emvs_stopped_by_light)
+    emvs_on_the_lane = get_emv(vehicle_list)
+    emv_waiting_time = vehicle_waiting_time_in_lane(emvs_on_the_lane)
     if emv_waiting_time != 0:
         return sum(emv_waiting_time)
     return 0
