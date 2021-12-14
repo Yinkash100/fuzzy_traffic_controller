@@ -1,4 +1,3 @@
-# import os, sys
 import pickle
 from fuzzy_traffic_controller import fuzzy_controller_function
 from helper_functions import *
@@ -25,12 +24,12 @@ emv_waiting_time = 0
 
 trafficLightID = traci.trafficlight.getIDList()[0]
 
-amount_moving_vehicles = []
-amount_stopped_vehicles = []
+no_stopped = []
+no_moving = []
 
 step = 0
 while step < 32000:
-# while step < 600:
+# while step < 100:
     # The get current lane the traffic light is passing
     lanes_currently_moving, lanes_stopped_by_light = get_lane_lists(lanes_in_D1B2, lanes_in_G2H1, trafficLightID)
 
@@ -41,9 +40,8 @@ while step < 32000:
     # Get no of cars in both lane
     no_vehicles_in_red_lanes = len(vehicles_in_red_lanes)
     no_vehicles_in_green_lanes = len(vehicles_in_green_lanes)
-
-    amount_moving_vehicles.append(no_vehicles_in_red_lanes)
-    amount_stopped_vehicles.append(no_vehicles_in_green_lanes)
+    no_moving.append(no_vehicles_in_green_lanes)
+    no_stopped.append(no_vehicles_in_red_lanes)
 
     # Get waiting time of cars in red-light lane
     vehicles_waiting_time = vehicle_waiting_time_in_lane(vehicles_in_red_lanes)
@@ -52,6 +50,7 @@ while step < 32000:
         max_waiting_time_in_red_lanes = vehicles_waiting_time[-1]
         sum_wt_time = sum(vehicles_waiting_time)
         total_vehicle_waiting_time += sum_wt_time
+#        wt_vehicles.append(sum_wt_time)
 
     # waiting time of emergency vehicles in red light
     emv_waiting_time_red_lane = get_emv_waiting_time(vehicles_in_red_lanes)
@@ -66,6 +65,7 @@ while step < 32000:
 
     no_emv_current_lane = len(emv_current_lane)
     no_emv_other_lane = len(emv_other_lane)
+ #   wt_emv.append(emv_waiting_time_red_lane + emv_waiting_time_green_lane)
 
     if (step > 0) and (step % 7) == 0:
         traffic_command = fuzzy_controller_function(no_vehicles_in_red_lanes,
@@ -91,10 +91,25 @@ print("emv_waiting_time")
 print(emv_waiting_time)
 
 
-with open("amount_moving_vehicles.txt", "wb") as fp:
-    pickle.dump(amount_moving_vehicles, fp)
+# with open("combined_emv_waiting_time.txt", "wb") as fp:
+#     pickle.dump(wt_emv, fp)
+#
+# with open("vehicles_waiting_time.txt", "wb") as fp:
+#     pickle.dump(wt_vehicles, fp)
 
 with open("amount_stopped_vehicles.txt", "wb") as fp:
-    pickle.dump(amount_stopped_vehicles, fp)
+    pickle.dump(no_stopped, fp)
+
+with open("amount_moving_vehicles.txt", "wb") as fp:
+    pickle.dump(no_moving, fp)
+
+print('no o stopped')
+print(len(no_stopped))
+# print(no_stopped)
+
+
+print('no o moving')
+print(len(no_moving))
+# print(no_moving)
 
 input('Press any key to exit')

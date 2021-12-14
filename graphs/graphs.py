@@ -1,45 +1,55 @@
 import pickle
 import matplotlib.pyplot as plt
 
-with open("vehicles_waiting_time.txt", "rb") as fp:
-    vehicle_wt_count_fuzzy = pickle.load(fp)
-
-a = vehicle_wt_count_fuzzy[:500]
-
-
-with open("vehicles_waiting_time_no-fuzz.txt", "rb") as fp:
-    vehicle_count_no_fuzzy = pickle.load(fp)
-
-b = vehicle_count_no_fuzzy[:500]
+labels = ['SUMO Fixed Time Traffic Controller', 'Fuzzy Logic Traffic Controller']
+avg_vehicle_waiting_time = [405.4233864541833, 303.57359397001574]
+# avg_emv_waiting_time = [3.68734375, 0.8426875]
 
 
-# i = 0
-# while i < 500:
-#     xaxis.append(i)
-#     i += 1
 
-plt.plot(a, label = "Fuzzy logic controlled traffic")
+width = 0.5
 
-plt.plot(b, label = "Fixed time controlled traffic")
+fig, ax = plt.subplots()
 
-# naming the x axis
-plt.xlabel('Time Step')
-# naming the y axis
-plt.ylabel('Waiting time')
+ax.bar(labels, avg_vehicle_waiting_time, width, label='Avg vehicle waiting time')
+# ax.bar(labels, avg_emv_waiting_time, width,  bottom=avg_vehicle_waiting_time,
+#       label='Avg Emergency vehicle waiting time')
 
-# giving a title to my graph
-plt.title('Combined Vehicle Waiting Time')
+ax.set_ylabel('Time (s)')
+ax.set_title('Waiting time by controller and vehicle type')
+ax.legend()
 
-plt.legend()
-
-# function to show the plot
 plt.show()
 
-# print("emv fuzz length")
-# print(len(emv_wt_fuzzy))
+
+
+# # ########################
 #
-# print("emv ordinary length")
-# print(len(emv_wt));
+
+
+# import pickle
+# import matplotlib.pyplot as plt
 #
-# print("x axis length")
-# print(len(xaxis))
+# labels = ['SUMO Fixed Time Traffic Controller', 'Fuzzy Logic Traffic Controller']
+# # avg_vehicle_waiting_time = [405.4233864541833, 303.57359397001574]
+# avg_emv_waiting_time = [3.68734375, 0.8426875]
+#
+#
+#
+# width = 0.5
+#
+# fig, ax = plt.subplots()
+#
+# # ax.bar(labels, avg_vehicle_waiting_time, width, label='Avg vehicle waiting time')
+# ax.bar(labels, avg_emv_waiting_time, width,
+#        label='Avg Emergency vehicle waiting time', color=['green'])
+# # ax.color('orange')
+# ax.set_ylabel('Time (s)')
+# ax.set_title('Waiting time by controller and vehicle type')
+# ax.legend()
+#
+# plt.show()
+#
+#
+#
+#
