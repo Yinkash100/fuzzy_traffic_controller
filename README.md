@@ -1,5 +1,6 @@
 # fuzzy_traffic_controller
 A fuzzy logic based traffic light controller using scikit-fuzzy  sumo.
+To reduce the waiting time of emergency vehicles at intersections, this fuzzy logic algorithm was designed to prioritize emergency vehicles simulated on sumo.
 
 ## Requirememts
 - [python3](https://www.python.org/downloads/)
